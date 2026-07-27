@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Auth;
+use App\Core\ExportadorExcel;
 use App\Models\Colaborador;
 use App\Models\Cidade;
 use App\Models\Departamento;
@@ -23,8 +24,60 @@ class ColaboradorController
     {
         Auth::exigirLogin();
 
-        // Filtros são todos opcionais, vindos da querystring (GET) — assim
-        // dá pra favoritar/compartilhar um link já filtrado.
+        $filtros = $this->filtrosDaQuerystring();
+        $colaboradores = Colaborador::listar($filtros);
+        $cidades = Cidade::listar();
+        $departamentos = Departamento::listar();
+        $regionais = Regional::listar();
+        $titulo = 'Colaboradores';
+        require __DIR__ . '/../Views/partials/header.php';
+        require __DIR__ . '/../Views/colaboradores/index.php';
+        require __DIR__ . '/../Views/partials/footer.php';
+    }
+
+    /**
+     * Mesma listagem da tela (com os mesmos filtros aplicados via
+     * querystring), só que exportada em .xlsx em vez de renderizada em HTML.
+     */
+    public function exportar(): void
+    {
+        Auth::exigirLogin();
+
+        $filtros = $this->filtrosDaQuerystring();
+        $colaboradores = Colaborador::listar($filtros);
+
+        $rotulosEstadoCivil = ['solteiro' => 'Solteiro(a)', 'casado' => 'Casado(a)', 'uniao_estavel' => 'União estável', 'divorciado' => 'Divorciado(a)', 'viuvo' => 'Viúvo(a)'];
+
+        $linhas = [];
+        foreach ($colaboradores as $colaborador) {
+            $linhas[] = [
+                $colaborador['nome'],
+                $colaborador['sexo'] === 'masculino' ? 'Masculino' : 'Feminino',
+                $rotulosEstadoCivil[$colaborador['estado_civil']] ?? '',
+                $colaborador['quantidade_filhos'] ?? 0,
+                trim(($colaborador['cidade_nome'] ?? '') . '/' . ($colaborador['cidade_uf'] ?? ''), '/'),
+                $colaborador['departamento_nome'] ?? '',
+                $colaborador['cargo'],
+                $colaborador['status'] === 'ativo' ? 'Ativo' : 'Desligado',
+                !empty($colaborador['data_admissao']) ? date('d/m/Y', strtotime($colaborador['data_admissao'])) : '',
+                !empty($colaborador['data_nascimento']) ? date('d/m/Y', strtotime($colaborador['data_nascimento'])) : '',
+                $colaborador['telefone'] ?? '',
+                $colaborador['email'] ?? '',
+            ];
+        }
+
+        ExportadorExcel::baixar('Colaboradores_' . date('Y-m-d') . '.xlsx', [
+            'Nome', 'Sexo', 'Estado civil', 'Filhos', 'Cidade', 'Departamento', 'Cargo', 'Status', 'Admissão', 'Nascimento', 'Telefone', 'E-mail',
+        ], $linhas);
+    }
+
+    /**
+     * Lê os filtros da tela de Colaboradores a partir da querystring —
+     * usado tanto na listagem normal quanto na exportação, pra manter
+     * os dois sempre em sincronia.
+     */
+    private function filtrosDaQuerystring(): array
+    {
         $filtros = [
             'busca'                => trim((string) ($_GET['busca'] ?? '')),
             'status'                => (string) ($_GET['status'] ?? ''),
@@ -38,16 +91,7 @@ class ColaboradorController
             'admitidos_desde'       => (string) ($_GET['admitidos_desde'] ?? ''),
         ];
         // Remove os vazios pra não sujar a query nem a URL
-        $filtros = array_filter($filtros, fn ($valor) => $valor !== '');
-
-        $colaboradores = Colaborador::listar($filtros);
-        $cidades = Cidade::listar();
-        $departamentos = Departamento::listar();
-        $regionais = Regional::listar();
-        $titulo = 'Colaboradores';
-        require __DIR__ . '/../Views/partials/header.php';
-        require __DIR__ . '/../Views/colaboradores/index.php';
-        require __DIR__ . '/../Views/partials/footer.php';
+        return array_filter($filtros, fn ($valor) => $valor !== '');
     }
 
     public function create(): void

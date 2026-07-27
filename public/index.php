@@ -56,6 +56,7 @@ $router->post('/tipos-ocorrencia/atualizar', [TipoOcorrenciaController::class, '
 $router->post('/tipos-ocorrencia/excluir', [TipoOcorrenciaController::class, 'destroy']);
 
 $router->get('/colaboradores', [ColaboradorController::class, 'index']);
+$router->get('/colaboradores/exportar', [ColaboradorController::class, 'exportar']);
 $router->get('/colaboradores/novo', [ColaboradorController::class, 'create']);
 $router->post('/colaboradores', [ColaboradorController::class, 'store']);
 $router->get('/colaboradores/editar', [ColaboradorController::class, 'edit']);

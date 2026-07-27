@@ -11,6 +11,9 @@
         </select>
     </div>
     <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>
+    <a href="?<?= htmlspecialchars(http_build_query(array_merge($_GET, ['dias' => $dias, 'exportar' => 1]))) ?>" class="btn btn-sm btn-outline-success">
+        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+    </a>
 </form>
 
 <table class="table table-striped bg-white align-middle">

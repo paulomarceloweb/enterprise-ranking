@@ -99,6 +99,9 @@
     <div class="mt-3">
         <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-funnel"></i> Filtrar</button>
         <a href="/colaboradores" class="btn btn-sm btn-outline-secondary">Limpar filtros</a>
+        <button type="submit" formaction="/colaboradores/exportar" class="btn btn-sm btn-outline-success">
+            <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+        </button>
         <span class="text-muted small ms-2"><?= count($colaboradores) ?> colaborador(es) encontrado(s)</span>
     </div>
 </form>

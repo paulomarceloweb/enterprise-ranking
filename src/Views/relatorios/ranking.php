@@ -7,6 +7,9 @@
         <input type="number" name="ano" class="form-control form-control-sm" value="<?= (int) $ano ?>" style="width: 110px;">
     </div>
     <button type="submit" class="btn btn-sm btn-primary">Ver</button>
+    <a href="?<?= htmlspecialchars(http_build_query(['ano' => $ano, 'exportar' => 1])) ?>" class="btn btn-sm btn-outline-success">
+        <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+    </a>
 </form>
 
 <table class="table table-striped bg-white align-middle">

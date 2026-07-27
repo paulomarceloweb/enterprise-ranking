@@ -4,6 +4,10 @@
     <a href="/relatorios" class="ms-2">← Voltar aos relatórios</a>
 </p>
 
+<a href="?<?= htmlspecialchars(http_build_query(array_merge($_GET, ['exportar' => 1]))) ?>" class="btn btn-sm btn-outline-success mb-4">
+    <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+</a>
+
 <div class="row g-4">
     <div class="col-md-4">
         <div class="card h-100">
