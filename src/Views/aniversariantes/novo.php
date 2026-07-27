@@ -10,10 +10,10 @@
     Só entram colaboradores <strong>ativos</strong>.
 </p>
 
-<form method="GET" action="/aniversariantes/pesquisar" style="max-width: 500px;">
+<form method="GET" action="/aniversariantes/pesquisar" style="max-width: 640px;">
     <div class="row g-3">
         <div class="col-md-6">
-            <label class="form-label">Mês *</label>
+            <label class="form-label text-nowrap">Mês *</label>
             <select name="mes" class="form-select" required>
                 <?php
                 $meses = [1=>'Janeiro',2=>'Fevereiro',3=>'Março',4=>'Abril',5=>'Maio',6=>'Junho',7=>'Julho',8=>'Agosto',9=>'Setembro',10=>'Outubro',11=>'Novembro',12=>'Dezembro'];
@@ -27,12 +27,13 @@
             </select>
         </div>
         <div class="col-md-6">
-            <label class="form-label">Ano de referência (só pra exibir na arte) *</label>
+            <label class="form-label text-nowrap">Ano de referência *</label>
             <?php
             // Se sugerimos dezembro -> janeiro, o ano de referência já deve virar o próximo
             $anoSugerido = $mesSugerido === 1 && (int) date('n') === 12 ? ((int) date('Y') + 1) : (int) date('Y');
             ?>
             <input type="number" name="ano" value="<?= $anoSugerido ?>" min="2020" max="2100" class="form-control" required>
+            <div class="form-text">Só pra exibir na arte gerada.</div>
         </div>
     </div>
     <div class="mt-4">

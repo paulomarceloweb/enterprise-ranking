@@ -63,6 +63,25 @@ class ArteGerada
         return $stmt->fetchAll();
     }
 
+    /**
+     * As últimas artes geradas, de qualquer tipo (ranking, boas-vindas,
+     * promoção, aniversário) — usado no card de atividade recente do Dashboard.
+     */
+    public static function listarRecentes(int $limite = 8): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare('
+            SELECT artes_geradas.*, colaboradores.nome AS colaborador_nome
+            FROM artes_geradas
+            LEFT JOIN colaboradores ON colaboradores.id = artes_geradas.colaborador_id
+            ORDER BY artes_geradas.gerado_em DESC
+            LIMIT :limite
+        ');
+        $stmt->bindValue('limite', $limite, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public static function excluirPorRanking(int $rankingId): void
     {
         $pdo = Database::getConnection();

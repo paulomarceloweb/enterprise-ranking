@@ -19,6 +19,8 @@ use App\Controllers\PromocaoController;
 use App\Controllers\AniversariantesController;
 use App\Controllers\OcorrenciaController;
 use App\Controllers\RelatorioController;
+use App\Controllers\UsuarioController;
+use App\Controllers\ConfiguracaoController;
 
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
@@ -109,5 +111,15 @@ $router->get('/relatorios/promocoes', [RelatorioController::class, 'promocoes'])
 $router->get('/relatorios/ocorrencias', [RelatorioController::class, 'ocorrencias']);
 $router->get('/relatorios/turnover', [RelatorioController::class, 'turnover']);
 $router->get('/relatorios/ranking', [RelatorioController::class, 'ranking']);
+
+$router->get('/usuarios', [UsuarioController::class, 'index']);
+$router->get('/usuarios/novo', [UsuarioController::class, 'create']);
+$router->post('/usuarios', [UsuarioController::class, 'store']);
+$router->get('/usuarios/editar', [UsuarioController::class, 'edit']);
+$router->post('/usuarios/atualizar', [UsuarioController::class, 'update']);
+$router->post('/usuarios/excluir', [UsuarioController::class, 'destroy']);
+
+$router->get('/configuracoes', [ConfiguracaoController::class, 'form']);
+$router->post('/configuracoes', [ConfiguracaoController::class, 'update']);
 
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

@@ -34,6 +34,25 @@ class Ocorrencia
         return $stmt->fetchAll();
     }
 
+    /**
+     * Últimas ocorrências registradas, de qualquer colaborador — usado no Dashboard.
+     */
+    public static function listarRecentes(int $limite = 5): array
+    {
+        $pdo = Database::getConnection();
+        $stmt = $pdo->prepare('
+            SELECT ocorrencias.*, colaboradores.nome AS colaborador_nome, tipos_ocorrencia.nome AS tipo_nome
+            FROM ocorrencias
+            LEFT JOIN colaboradores ON colaboradores.id = ocorrencias.colaborador_id
+            LEFT JOIN tipos_ocorrencia ON tipos_ocorrencia.id = ocorrencias.tipo_ocorrencia_id
+            ORDER BY ocorrencias.criado_em DESC
+            LIMIT :limite
+        ');
+        $stmt->bindValue('limite', $limite, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public static function buscarPorId(int $id): ?array
     {
         $pdo = Database::getConnection();
