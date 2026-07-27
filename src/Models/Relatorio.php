@@ -223,6 +223,56 @@ class Relatorio
     }
 
     /**
+     * Turnover rolando os últimos N meses (não é ano-calendário fixo) —
+     * usado no gráfico do Dashboard. Retorna em ordem cronológica, do mais
+     * antigo pro mais recente, com rótulo "mm/aaaa" pronto pra exibir.
+     */
+    public static function turnoverUltimosMeses(int $quantidadeMeses = 12): array
+    {
+        $pdo = Database::getConnection();
+
+        $meses = [];
+        for ($i = $quantidadeMeses - 1; $i >= 0; $i--) {
+            $referencia = strtotime("-{$i} months", strtotime(date('Y-m-01')));
+            $meses[date('Y-m', $referencia)] = [
+                'rotulo'        => date('m/Y', $referencia),
+                'admissoes'     => 0,
+                'desligamentos' => 0,
+            ];
+        }
+
+        $dataInicio = array_key_first($meses) . '-01';
+
+        $stmtAdmissoes = $pdo->prepare("
+            SELECT DATE_FORMAT(data_admissao, '%Y-%m') AS chave, COUNT(*) AS total
+            FROM colaboradores
+            WHERE data_admissao >= :data_inicio
+            GROUP BY chave
+        ");
+        $stmtAdmissoes->execute(['data_inicio' => $dataInicio]);
+        foreach ($stmtAdmissoes->fetchAll() as $linha) {
+            if (isset($meses[$linha['chave']])) {
+                $meses[$linha['chave']]['admissoes'] = (int) $linha['total'];
+            }
+        }
+
+        $stmtDesligamentos = $pdo->prepare("
+            SELECT DATE_FORMAT(data_desligamento, '%Y-%m') AS chave, COUNT(*) AS total
+            FROM colaboradores
+            WHERE data_desligamento >= :data_inicio
+            GROUP BY chave
+        ");
+        $stmtDesligamentos->execute(['data_inicio' => $dataInicio]);
+        foreach ($stmtDesligamentos->fetchAll() as $linha) {
+            if (isset($meses[$linha['chave']])) {
+                $meses[$linha['chave']]['desligamentos'] = (int) $linha['total'];
+            }
+        }
+
+        return array_values($meses);
+    }
+
+    /**
      * Ranking de colocações num ano: quantas vezes cada colaborador ficou
      * em 1º, 2º ou 3º lugar nas artes de ranking geradas.
      */

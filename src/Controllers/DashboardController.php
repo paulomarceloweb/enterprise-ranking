@@ -29,6 +29,11 @@ class DashboardController
             }
         }
 
+        // Dados pros gráficos
+        $turnover12Meses = Relatorio::turnoverUltimosMeses(12);
+        $porDepartamento = $demografico['por_departamento'];
+        $topRankingAno = array_slice(Relatorio::rankingPeriodo((int) date('Y')), 0, 5);
+
         $titulo = 'Dashboard';
         require __DIR__ . '/../Views/partials/header.php';
         require __DIR__ . '/../Views/dashboard/index.php';
