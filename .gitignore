@@ -1,7 +1,24 @@
 /vendor/
 /.env
-/public/assets/uploads/*
-!/public/assets/uploads/.gitkeep
 composer.phar
 .DS_Store
 Thumbs.db
+
+# Fotos de colaborador enviadas pelo usuário
+/public/assets/uploads/*
+!/public/assets/uploads/.gitkeep
+
+# Artes geradas (Ranking, Boas-vindas, Promoção, Aniversariantes) — são
+# saída do sistema, regeneráveis, e ficam pesadas rápido com 50+ pessoas/mês
+/public/assets/artes/*
+!/public/assets/artes/.gitkeep
+
+# Planilhas enviadas, histórico de planilhas e anexos de ocorrência —
+# fora de public/ de propósito, mas também não devem ir pro repositório
+# (dados sensíveis de R.H. e arquivos grandes)
+/storage/temp/*
+!/storage/temp/.gitkeep
+/storage/planilhas/*
+!/storage/planilhas/.gitkeep
+/storage/ocorrencias/*
+!/storage/ocorrencias/.gitkeep
